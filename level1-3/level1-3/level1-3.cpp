@@ -23,14 +23,14 @@ int main()
 	int people_in_elevator = 0;//电梯内人数
 	int time = 0;//电梯运行时间
 	int aim_floor_max, aim_floor_min;//电梯已知要到达的最高层与最低层
-	int temp = 0;
 	int people_arr[10] = { 0 };//人所在楼层
-	int aim_arr[10] = {0};//人去往楼层
-	int elevator_count_arr[10] = {0};//电梯已知要把人送到的楼层
+	int aim_arr[10] = { 0 };//人去往楼层
+	int elevator_count_arr[10] = { 0 };//电梯已知要把人送到的楼层
 	int elevator;//电梯所在楼层
-	int n,i,m;
+	int n, i, m;
 	int up, under;//电梯启动时在电梯所在层楼上与楼下人数
-	aim_floor_max = aim_floor_min = up = under = m=0;
+	aim_floor_max = aim_floor_min = up = under = m = 0;
+	printf_s("请不要输入太特殊的情况QAQ\n");
 	for (i = 0; i < 10; i++)
 	{
 		printf_s("请输入第%d个人的所在楼层(最多10人)\n输入0以退出\n", i + 1);
@@ -51,13 +51,13 @@ int main()
 	elevator = people_arr[n];
 	elevator_count_arr[n] = aim_arr[n];
 	print(elevator, time, people_in_elevator);
-	if (elevator_count_arr[n] <elevator)
+	if (elevator_count_arr[n] < elevator)
 		upward = false;
 	else
 		upward = true;
-	while (number_of_people != 0) {
+	while(number_of_people!=0) {
 		//电梯上行
-		while (upward) {
+		while (upward and number_of_people!=0) {
 			if (number_of_people == 0)
 				break;
 			for (i = 0; i < 10; i++) {
@@ -68,84 +68,89 @@ int main()
 				{
 					people_in_elevator--;
 					number_of_people--;
+					elevator_count_arr[i] = 0;
+					aim_arr[i] = 0;
+					if (!if_same(people_arr, 10, elevator))
+						print(elevator, time, people_in_elevator);
 					if (number_of_people == 0)
 						break;
+				}
+
+
+				//电梯进人
+				if (people_arr[i] == elevator and people_in_elevator < LIMIT) {
+					people_in_elevator++;
+					people_arr[i] = 0;
+					elevator_count_arr[i] = aim_arr[i];
+					aim_floor_max = MAX(elevator_count_arr, 10);
+					aim_floor_min = MIN(elevator_count_arr, 10);
+					print(elevator, time, people_in_elevator);
+					printf_s("elevator situation\n");
+
+				}
+				//电梯到顶后
+				if (elevator_count_arr[i] == elevator and aim_floor_max <= elevator
+					and (!if_up(people_arr, 10, elevator))) {
+					people_in_elevator--;
+					number_of_people--;
 					elevator_count_arr[i] = 0;
-					if(!if_same(people_arr,10,elevator))
-					   print(elevator, time, people_in_elevator);
+					upward = false;
+					print(elevator, time, people_in_elevator);
+					if (number_of_people == 0)
+						break;
 				}
-					//电梯进人
-					if (people_arr[i] == elevator and people_in_elevator < LIMIT) {
-						people_in_elevator++;
-						people_arr[i] = 0;
-						elevator_count_arr[i] = aim_arr[i];
-						aim_floor_max = MAX(elevator_count_arr, 10);
-						aim_floor_min = MIN(elevator_count_arr, 10);
-						print(elevator, time, people_in_elevator);
-					}
-					//电梯到顶后
-					if (elevator_count_arr[i] == elevator and aim_floor_max == elevator
-						and  !(if_up(people_arr, 10, elevator))) {
-						people_in_elevator--;
-						number_of_people--;
-						if (number_of_people == 0)
-							break;
-						elevator_count_arr[i] = 0;
-						upward = false;
-						print(elevator, time, people_in_elevator);
-					}
-
-
-				}
-				elevator++;
-				time++;
 			}
-
-
-			while (!upward) {
-				if (number_of_people == 0)
-					break;
-				for (i = 0; i < 10; i++) {
-					//电梯下人
-					if ((elevator_count_arr[i] == elevator and aim_floor_min != elevator) or
-						(elevator_count_arr[i] == elevator and aim_floor_min == elevator
-							and (if_down(people_arr, 10, elevator))))
-					{
-						people_in_elevator--;
-						number_of_people--;
-						if (number_of_people == 0)
-							break;
-						elevator_count_arr[i] = 0;
-						if (!if_same(people_arr, 10, elevator))
+			elevator++;
+			time++;
+		}
+		//电梯下行
+		while (!upward and number_of_people!=0) {
+			if (number_of_people == 0)
+				break;
+			for (i = 0; i < 10; i++) {
+				//电梯下人
+				if ((elevator_count_arr[i] == elevator and aim_floor_min != elevator) or
+					(elevator_count_arr[i] == elevator and aim_floor_min == elevator
+						and (if_down(people_arr, 10, elevator))))
+				{
+					people_in_elevator--;
+					number_of_people--;
+					aim_arr[i] = 0;
+					elevator_count_arr[i] = 0;
+					if (!if_same(people_arr, 10, elevator))
 						print(elevator, time, people_in_elevator);
-						//电梯进人
-						if (people_arr[i] == elevator and people_in_elevator < LIMIT) {
-							people_in_elevator++;
-							people_arr[i] = 0;
-							elevator_count_arr[i] = aim_arr[i];
-							aim_floor_max = MAX(elevator_count_arr, 10);
-							aim_floor_min = MIN(elevator_count_arr, 10);
-							print(elevator, time, people_in_elevator);
-						}
-						//电梯到底后
-						if (elevator_count_arr[i] == elevator and aim_floor_min == elevator
-							and !(if_down(people_arr, 10, elevator))) {
-							people_in_elevator--;
-							number_of_people--;
-							if (number_of_people == 0)
-								break;
-							elevator_count_arr[i] = 0;
-							upward = false;
-							print(elevator, time, people_in_elevator);
-						}	
-					}
-					elevator--;
-					time++;
+					if (number_of_people == 0)
+						break;
 				}
-				return 0;
+				//电梯进人
+				if (people_arr[i] == elevator and people_in_elevator < LIMIT) {
+					people_in_elevator++;
+					people_arr[i] = 0;
+					elevator_count_arr[i] = aim_arr[i];
+					aim_floor_max = MAX(elevator_count_arr, 10);
+					aim_floor_min = MIN(elevator_count_arr, 10);
+					print(elevator, time, people_in_elevator);
+				}
+				//电梯到底后
+				if (elevator_count_arr[i] == elevator and aim_floor_min >= elevator
+					and !(if_down(people_arr, 10, elevator))) {
+					people_in_elevator--;
+					number_of_people--;
+					elevator_count_arr[i] = 0;
+					upward = false;
+					print(elevator, time, people_in_elevator);
+					if (number_of_people == 0)
+						break;
+				}
 			}
+			printf_s("program ongoing!\n");
+			printf_s("%d\n", elevator);
+			elevator--;
+			time++;
 		}
 	}
+	return 0;
+}
 	int input_number(void)
 	{
 		int input;
