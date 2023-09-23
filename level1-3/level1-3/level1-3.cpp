@@ -8,6 +8,7 @@
 #include <math.h>
 #define LIMIT 4
 static int count = 0;
+static int count2 = 0;
 int MAX(int arr[], int);
 int MIN(int arr[], int);
 int input_number(void);
@@ -50,7 +51,6 @@ int main()
 	time = abs(people_arr[n] - elevator);
 	elevator = people_arr[n];
 	elevator_count_arr[n] = aim_arr[n];
-	print(elevator, time, people_in_elevator);
 	if (elevator_count_arr[n] < elevator)
 		upward = false;
 	else
@@ -84,9 +84,8 @@ int main()
 					elevator_count_arr[i] = aim_arr[i];
 					aim_floor_max = MAX(elevator_count_arr, 10);
 					aim_floor_min = MIN(elevator_count_arr, 10);
+					if (count2!=1)
 					print(elevator, time, people_in_elevator);
-					printf_s("elevator situation\n");
-
 				}
 				//电梯到顶后
 				if (elevator_count_arr[i] == elevator and aim_floor_max <= elevator
@@ -143,8 +142,6 @@ int main()
 						break;
 				}
 			}
-			printf_s("program ongoing!\n");
-			printf_s("%d\n", elevator);
 			elevator--;
 			time++;
 		}
